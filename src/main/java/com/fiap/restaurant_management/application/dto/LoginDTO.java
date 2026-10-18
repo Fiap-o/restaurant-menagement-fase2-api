@@ -1,0 +1,23 @@
+package com.fiap.restaurant_management.application.dto;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class LoginDTO {
+
+    @Schema(description = "Login do usuário", example = "sophia.asilva")
+    @NotBlank(message = "Login é obrigatório")
+    private String login;
+
+    @Schema(description = "Senha do usuário", example = "SenhaFort387542")
+    @NotBlank(message = "Senha é obrigatória")
+    private String senha;
+}
