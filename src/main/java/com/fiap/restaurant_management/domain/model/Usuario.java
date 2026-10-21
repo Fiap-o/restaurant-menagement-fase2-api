@@ -1,6 +1,5 @@
 package com.fiap.restaurant_management.domain.model;
 
-import com.fiap.restaurant_management.entities.TipoUsuario;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;

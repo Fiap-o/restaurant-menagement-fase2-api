@@ -6,9 +6,14 @@ import java.time.Instant;
 
 import com.fiap.restaurant_management.domain.exception.CredenciaisInvalidasException;
 import com.fiap.restaurant_management.domain.exception.EmailJaCadastradoException;
+import com.fiap.restaurant_management.domain.exception.ItemCardapioNaoEncontradoException;
 import com.fiap.restaurant_management.domain.exception.LoginJaCadastradoException;
+import com.fiap.restaurant_management.domain.exception.RestauranteNaoEncontradoException;
 import com.fiap.restaurant_management.domain.exception.SenhaAtualInvalidaException;
+import com.fiap.restaurant_management.domain.exception.TipoUsuarioJaCadastradoException;
+import com.fiap.restaurant_management.domain.exception.TipoUsuarioNaoEncontradoException;
 import com.fiap.restaurant_management.domain.exception.UsuarioNaoEncontradoException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ProblemDetail;
@@ -47,6 +52,34 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CredenciaisInvalidasException.class)
     public ProblemDetail handleCredenciaisInvalidas(CredenciaisInvalidasException ex) {
         return buildProblemDetail(HttpStatus.UNAUTHORIZED, ex.getMessage(), "credenciais-invalidas");
+    }
+
+    @ExceptionHandler(TipoUsuarioNaoEncontradoException.class)
+    public ProblemDetail handleTipoUsuarioNaoEncontrado(TipoUsuarioNaoEncontradoException ex) {
+        return buildProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage(), "tipo-usuario-nao-encontrado");
+    }
+
+    @ExceptionHandler(TipoUsuarioJaCadastradoException.class)
+    public ProblemDetail handleTipoUsuarioJaCadastrado(TipoUsuarioJaCadastradoException ex) {
+        return buildProblemDetail(HttpStatus.CONFLICT, ex.getMessage(), "tipo-usuario-ja-cadastrado");
+    }
+
+    @ExceptionHandler(RestauranteNaoEncontradoException.class)
+    public ProblemDetail handleRestauranteNaoEncontrado(RestauranteNaoEncontradoException ex) {
+        return buildProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage(), "restaurante-nao-encontrado");
+    }
+
+    @ExceptionHandler(ItemCardapioNaoEncontradoException.class)
+    public ProblemDetail handleItemCardapioNaoEncontrado(ItemCardapioNaoEncontradoException ex) {
+        return buildProblemDetail(HttpStatus.NOT_FOUND, ex.getMessage(), "item-cardapio-nao-encontrado");
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        return buildProblemDetail(
+                HttpStatus.CONFLICT,
+                "Não é possível concluir a operação porque há registros vinculados a este recurso",
+                "violacao-integridade-dados");
     }
 
     @Override

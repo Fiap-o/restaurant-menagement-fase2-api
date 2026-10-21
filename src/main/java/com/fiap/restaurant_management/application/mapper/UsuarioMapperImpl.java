@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public class UsuarioMapperImpl implements UsuarioMapper {
 
     private final EnderecoMapper enderecoMapper;
+    private final TipoUsuarioMapper tipoUsuarioMapper;
 
     @Override
     public Usuario toEntity(UsuarioCreateDTO dto) {
@@ -19,7 +20,6 @@ public class UsuarioMapperImpl implements UsuarioMapper {
         usuario.setEmail(dto.getEmail());
         usuario.setLogin(dto.getLogin());
         usuario.setSenha(dto.getSenha());
-        usuario.setTipoUsuario(dto.getTipoUsuario());
         usuario.setEndereco(enderecoMapper.toEntity(dto.getEndereco()));
         return usuario;
     }
@@ -31,7 +31,7 @@ public class UsuarioMapperImpl implements UsuarioMapper {
                 .nome(usuario.getNome())
                 .email(usuario.getEmail())
                 .login(usuario.getLogin())
-                .tipoUsuario(usuario.getTipoUsuario())
+                .tipoUsuario(tipoUsuarioMapper.toResponseDTO(usuario.getTipoUsuario()))
                 .endereco(enderecoMapper.toDTO(usuario.getEndereco()))
                 .dataUltimaAlteracao(usuario.getDataUltimaAlteracao())
                 .build();

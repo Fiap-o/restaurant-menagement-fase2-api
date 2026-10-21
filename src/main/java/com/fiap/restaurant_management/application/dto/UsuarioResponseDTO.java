@@ -1,7 +1,5 @@
 package com.fiap.restaurant_management.application.dto;
 
-import com.fiap.restaurant_management.entities.TipoUsuario;
-
 import java.time.LocalDateTime;
 
 import lombok.Getter;
@@ -31,7 +29,7 @@ public class UsuarioResponseDTO {
     private String login;
 
     @Schema(description = "Tipo do usuário")
-    private TipoUsuario tipoUsuario;
+    private TipoUsuarioResponseDTO tipoUsuario;
 
     @Schema(description = "Endereço do usuário")
     private EnderecoDTO endereco;

@@ -1,7 +1,5 @@
 package com.fiap.restaurant_management.application.dto;
 
-import com.fiap.restaurant_management.entities.TipoUsuario;
-
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.Valid;
@@ -35,9 +33,9 @@ public class UsuarioCreateDTO {
     @NotBlank(message = "Senha é obrigatória")
     private String senha;
 
-    @Schema(description = "Tipo do usuário")
+    @Schema(description = "ID do tipo de usuário (cadastrado previamente)", example = "1")
     @NotNull(message = "Tipo de usuário é obrigatório")
-    private TipoUsuario tipoUsuario;
+    private Long tipoUsuarioId;
 
     @Schema(description = "Endereço do usuário")
     @NotNull(message = "Endereço é obrigatório")

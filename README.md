@@ -1,6 +1,6 @@
 # Restaurant Management API
 
-Backend do **Tech Challenge — Fase 1** (Pós Tech Arquitetura e Desenvolvimento Java), desenvolvido em Spring Boot. Fornece a base de um sistema de gestão compartilhado entre restaurantes, cobrindo cadastro, atualização e autenticação de usuários (clientes e donos de restaurante).
+Backend do **Tech Challenge — Fase 2** (Pós Tech Arquitetura e Desenvolvimento Java), desenvolvido em Spring Boot. Fornece a base de um sistema de gestão compartilhado entre restaurantes, cobrindo cadastro e autenticação de usuários, gestão de tipos de usuário, cadastro de restaurantes e dos itens de seus cardápios.
 
 ## Integrantes
 
@@ -21,11 +21,13 @@ Backend do **Tech Challenge — Fase 1** (Pós Tech Arquitetura e Desenvolviment
 ## Funcionalidades
 
 - Cadastro, atualização e exclusão de usuários
-- Dois tipos de usuário: `CLIENTE` e `DONO_RESTAURANTE`
+- CRUD completo de tipos de usuário, com associação a usuários existentes
+- Cadastro, atualização, consulta e exclusão de restaurantes, vinculados a um usuário responsável
+- Cadastro, atualização, consulta e exclusão de itens de cardápio, vinculados a um restaurante
 - Endpoint dedicado para troca de senha
 - Endpoint dedicado para atualização dos demais dados do usuário
 - Busca de usuários por nome
-- Garantia de e-mail e login únicos
+- Garantia de e-mail, login e nome de tipo de usuário únicos
 - Autenticação via login/senha com emissão de token JWT
 - Respostas de erro padronizadas via RFC 7807 (`ProblemDetail`)
 - Versionamento de API (`/api/v1`)
@@ -88,15 +90,16 @@ Com a aplicação rodando, acesse:
 
 A maior parte dos endpoints exige um token JWT. Fluxo:
 
-1. Cadastre um usuário — `POST /api/v1/usuarios` (não requer autenticação).
-2. Autentique-se — `POST /api/v1/auth/login` com login e senha, recebendo um token JWT.
-3. Envie o token nas próximas requisições pelo header `Authorization: Bearer <token>`.
+1. Cadastre um tipo de usuário — `POST /api/v1/tipos-usuario` (não requer autenticação).
+2. Cadastre um usuário, informando o `tipoUsuarioId` do passo anterior — `POST /api/v1/usuarios` (não requer autenticação).
+3. Autentique-se — `POST /api/v1/auth/login` com login e senha, recebendo um token JWT.
+4. Envie o token nas próximas requisições pelo header `Authorization: Bearer <token>`.
 
 No Swagger UI, use o botão **Authorize** para informar o token e testar as rotas protegidas diretamente pela interface.
 
 ## Coleção Postman
 
-O arquivo [`restaurant-management.postman_collection.json`](./restaurant-management.postman_collection.json) contém os principais cenários de teste: cadastro de usuário (válido e inválido), troca de senha, atualização de dados, busca por nome e validação de login. Basta importar no Postman.
+O arquivo [`restaurant-management.postman_collection.json`](./restaurant-management.postman_collection.json) contém os principais cenários de teste: cadastro de usuário, tipo de usuário, restaurante e item de cardápio (válidos e inválidos), troca de senha, atualização de dados, busca por nome e validação de login. Basta importar no Postman.
 
 ## Endpoints principais
 
@@ -109,6 +112,22 @@ O arquivo [`restaurant-management.postman_collection.json`](./restaurant-managem
 | GET    | `/api/v1/usuarios/{id}`       | Buscar usuário por ID             | Sim          |
 | GET    | `/api/v1/usuarios?nome=`      | Buscar usuários por nome          | Sim          |
 | POST   | `/api/v1/auth/login`          | Autenticar e obter token JWT      | Não          |
+| POST   | `/api/v1/tipos-usuario`       | Cadastrar tipo de usuário          | Não          |
+| PUT    | `/api/v1/tipos-usuario/{id}`  | Atualizar tipo de usuário          | Sim          |
+| DELETE | `/api/v1/tipos-usuario/{id}`  | Excluir tipo de usuário            | Sim          |
+| GET    | `/api/v1/tipos-usuario/{id}`  | Buscar tipo de usuário por ID      | Sim          |
+| GET    | `/api/v1/tipos-usuario`       | Listar tipos de usuário            | Sim          |
+| PATCH  | `/api/v1/tipos-usuario/{tipoUsuarioId}/usuarios/{usuarioId}` | Associar tipo a um usuário | Sim |
+| POST   | `/api/v1/restaurantes`        | Cadastrar restaurante              | Sim          |
+| PUT    | `/api/v1/restaurantes/{id}`   | Atualizar restaurante              | Sim          |
+| DELETE | `/api/v1/restaurantes/{id}`   | Excluir restaurante                | Sim          |
+| GET    | `/api/v1/restaurantes/{id}`   | Buscar restaurante por ID          | Sim          |
+| GET    | `/api/v1/restaurantes`        | Listar restaurantes                | Sim          |
+| POST   | `/api/v1/itens-cardapio`      | Cadastrar item de cardápio         | Sim          |
+| PUT    | `/api/v1/itens-cardapio/{id}` | Atualizar item de cardápio         | Sim          |
+| DELETE | `/api/v1/itens-cardapio/{id}` | Excluir item de cardápio           | Sim          |
+| GET    | `/api/v1/itens-cardapio/{id}` | Buscar item de cardápio por ID     | Sim          |
+| GET    | `/api/v1/itens-cardapio/restaurante/{restauranteId}` | Listar itens de um restaurante | Sim |
 
 ## Tratamento de erros
 
@@ -134,17 +153,52 @@ Para rodar:
 
 Ou, pela IDE, clique no ícone ▶️ ao lado da classe de teste (`src/test/java/.../service/impl/`).
 
+## Arquitetura
+
+O projeto segue **Clean Architecture**, organizado em três camadas com uma regra de dependência única: o código
+só pode depender de camadas mais internas, nunca o contrário.
+
+| Camada | Responsabilidade | Não depende de |
+|---|---|---|
+| **Domain** | Entidades de negócio e regras invariantes, portas (interfaces) de repositório, exceções de domínio | Nenhum framework (sem JPA, sem Spring) |
+| **Application** | Casos de uso (um por ação de negócio), DTOs de entrada/saída, mapeamento entre DTO e domínio | Detalhes de persistência ou protocolo HTTP |
+| **Infrastructure** | Implementações concretas: JPA/Hibernate, controllers REST, Spring Security, JWT, Swagger | — (é a camada mais externa) |
+
+Essa separação garante que as regras de negócio (camada `domain`) possam ser entendidas e testadas sem depender de
+banco de dados, framework web ou biblioteca de segurança — e permite trocar detalhes técnicos (ex: trocar de
+banco de dados) sem alterar a lógica de negócio.
+
+### Princípios SOLID aplicados
+
+| Princípio | Aplicação no projeto |
+|---|---|
+| **SRP** (Responsabilidade Única) | Cada caso de uso (`application/usecase`) trata de uma única ação de negócio (ex: `CriarUsuarioUseCase`, `AtualizarSenhaUseCase`); controllers só traduzem requisição/resposta HTTP |
+| **OCP** (Aberto/Fechado) | Repositórios e serviços externos são acessados via interfaces (`domain/repository`, `application/port`), permitindo trocar a implementação sem alterar os casos de uso |
+| **LSP** (Substituição de Liskov) | As implementações de repositório (`infrastructure/persistence/repository`) cumprem integralmente o contrato definido pela interface de domínio correspondente |
+| **ISP** (Segregação de Interfaces) | Interfaces enxutas, com apenas os métodos realmente usados pelos casos de uso (ex: `TokenService` expõe só geração de token, não validação) |
+| **DIP** (Inversão de Dependência) | Casos de uso dependem de abstrações de domínio (`UsuarioRepository`, `TokenService`, `AuthenticationPort`), nunca de `JpaRepository` ou de bibliotecas de terceiros diretamente |
+
 ## Estrutura do projeto
 
 ```
 src/main/java/com/fiap/restaurant_management/
-├── config/          # Configuração de segurança (Spring Security)
-├── controller/      # Controllers REST (Usuario, Auth)
-├── dto/             # DTOs de requisição e resposta
-├── entities/        # Entidades JPA (Usuario, Endereco, TipoUsuario)
-├── exception/       # Exceções de domínio e handler global (ProblemDetail)
-├── mapper/          # Conversão entre entidades e DTOs
-├── repositories/    # Repositórios Spring Data JPA
-├── security/        # Filtro e serviço JWT
-└── service/         # Regras de negócio (interfaces + implementações)
+├── domain/                      # Regras de negócio, independentes de framework
+│   ├── model/                   # Entidades de domínio (Usuario, Endereco, TipoUsuario, Restaurante, ItemCardapio)
+│   ├── repository/              # Portas (interfaces) de persistência
+│   └── exception/                # Exceções de regra de negócio
+├── application/                 # Orquestração dos casos de uso
+│   ├── usecase/                 # Um caso de uso por ação de negócio
+│   ├── dto/                     # DTOs de requisição e resposta da API
+│   ├── mapper/                  # Conversão entre DTOs e entidades de domínio
+│   └── port/                    # Portas para serviços externos (ex: geração de token)
+└── infrastructure/              # Implementações concretas e detalhes técnicos
+    ├── persistence/
+    │   ├── entity/               # Entidades JPA
+    │   ├── repository/           # Repositórios Spring Data JPA e adaptadores das portas de domínio
+    │   └── mapper/               # Conversão entre entidades de domínio e entidades JPA
+    ├── web/
+    │   ├── controller/           # Controllers REST
+    │   └── exception/            # Handler global de exceções (ProblemDetail)
+    ├── security/                 # Filtro e serviço JWT, UserDetailsService
+    └── config/                   # Configuração de segurança e Swagger/OpenAPI
 ```

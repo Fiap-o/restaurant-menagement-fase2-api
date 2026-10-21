@@ -2,13 +2,169 @@
   "info": {
     "_postman_id": "1c1365ba-be58-4d40-a91c-c3a7c6735089",
     "name": "Restaurant Management API",
-    "description": "Coleção de testes para o Tech Challenge Fase 1 - Gestão de Usuários",
+    "description": "Coleção de testes para o Tech Challenge Fase 2 - Gestão de Usuários, Tipos de Usuário, Restaurantes e Itens de Cardápio",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "38383084"
   },
   "item": [
     {
-      "name": "1. Cadastro de Usuário",
+      "name": "1. Cadastro de Tipo de Usuário",
+      "item": [
+        {
+          "name": "Cadastro válido - CLIENTE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Retorna id do tipo de usuário\", function () {",
+                  "    pm.expect(jsonData.id).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set(\"tipoUsuarioId\", jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"CLIENTE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tipos-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tipos-usuario"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro válido - DONO_RESTAURANTE",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Retorna id do tipo de usuário\", function () {",
+                  "    pm.expect(jsonData.id).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set(\"tipoUsuarioAssociacaoId\", jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"DONO_RESTAURANTE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tipos-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tipos-usuario"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro inválido - nome duplicado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 409 Conflict\", function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"Retorna detalhe do erro (ProblemDetail)\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.detail).to.include(\"já cadastrado\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"CLIENTE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tipos-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tipos-usuario"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Cadastro de Usuário",
       "item": [
         {
           "name": "Cadastro válido",
@@ -49,7 +205,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"Erick Roberto\",\n  \"email\": \"erick.ribeiro@email.com\",\n  \"login\": \"erickribeiro\",\n  \"senha\": \"senha123\",\n  \"tipoUsuario\": \"CLIENTE\",\n  \"endereco\": {\n    \"rua\": \"Rua Tiradentes\",\n    \"numero\": \"1957\",\n    \"cidade\": \"São Bernardo do Campo\",\n    \"cep\": \"09985-265\"\n  }\n}"
+              "raw": "{\n  \"nome\": \"Erick Roberto\",\n  \"email\": \"erick.ribeiro@email.com\",\n  \"login\": \"erickribeiro\",\n  \"senha\": \"senha123\",\n  \"tipoUsuarioId\": {{tipoUsuarioId}},\n  \"endereco\": {\n    \"rua\": \"Rua Tiradentes\",\n    \"numero\": \"1957\",\n    \"cidade\": \"São Bernardo do Campo\",\n    \"cep\": \"09985-265\"\n  }\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/usuarios",
@@ -96,7 +252,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"nome\": \"Erick Roberto\",\n  \"email\": \"erick.ribeiro@email.com\",\n  \"login\": \"erickribeiro\",\n  \"senha\": \"senha123\",\n  \"tipoUsuario\": \"CLIENTE\",\n  \"endereco\": {\n    \"rua\": \"Rua Tiradentes\",\n    \"numero\": \"1957\",\n    \"cidade\": \"São Bernardo do Campo\",\n    \"cep\": \"09985-265\"\n  }\n}"
+              "raw": "{\n  \"nome\": \"Erick Roberto\",\n  \"email\": \"erick.ribeiro@email.com\",\n  \"login\": \"erickribeiro2\",\n  \"senha\": \"senha123\",\n  \"tipoUsuarioId\": {{tipoUsuarioId}},\n  \"endereco\": {\n    \"rua\": \"Rua Tiradentes\",\n    \"numero\": \"1957\",\n    \"cidade\": \"São Bernardo do Campo\",\n    \"cep\": \"09985-265\"\n  }\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/usuarios",
@@ -160,7 +316,7 @@
       ]
     },
     {
-      "name": "2. Autenticação",
+      "name": "3. Autenticação",
       "item": [
         {
           "name": "Login válido",
@@ -262,7 +418,7 @@
       ]
     },
     {
-      "name": "3. Busca de Usuários",
+      "name": "4. Busca de Usuários",
       "item": [
         {
           "name": "Buscar usuário por nome",
@@ -380,7 +536,7 @@
       ]
     },
     {
-      "name": "4. Atualização de Dados",
+      "name": "5. Atualização de Dados",
       "item": [
         {
           "name": "Atualizar dados com sucesso",
@@ -481,7 +637,7 @@
       ]
     },
     {
-      "name": "5. Troca de Senha",
+      "name": "6. Troca de Senha",
       "item": [
         {
           "name": "Trocar senha com sucesso",
@@ -584,7 +740,521 @@
       ]
     },
     {
-      "name": "6. Exclusão de Usuário",
+      "name": "7. Associação de Tipo de Usuário",
+      "item": [
+        {
+          "name": "Associar tipo a usuário",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Usuário passa a ter o novo tipo\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.tipoUsuario.id).to.eql(pm.collectionVariables.get(\"tipoUsuarioAssociacaoId\"));",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tipos-usuario/{{tipoUsuarioAssociacaoId}}/usuarios/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tipos-usuario",
+                "{{tipoUsuarioAssociacaoId}}",
+                "usuarios",
+                "{{usuarioId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar tipos de usuário",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Retorna lista de tipos de usuário\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/tipos-usuario",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "tipos-usuario"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "8. Cadastro de Restaurante",
+      "item": [
+        {
+          "name": "Cadastro válido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Retorna id do restaurante\", function () {",
+                  "    pm.expect(jsonData.id).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set(\"restauranteId\", jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Cantina da Nonna\",\n  \"endereco\": {\n    \"rua\": \"Rua Augusta\",\n    \"numero\": \"500\",\n    \"cidade\": \"São Paulo\",\n    \"cep\": \"01304-000\"\n  },\n  \"tipoCozinha\": \"Italiana\",\n  \"horarioFuncionamento\": \"Seg a Sáb, 11h às 23h\",\n  \"donoId\": {{usuarioId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "restaurantes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro inválido - dono inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Restaurante Fantasma\",\n  \"endereco\": {\n    \"rua\": \"Rua Inexistente\",\n    \"numero\": \"0\",\n    \"cidade\": \"São Paulo\",\n    \"cep\": \"00000-000\"\n  },\n  \"tipoCozinha\": \"Indefinida\",\n  \"horarioFuncionamento\": \"24h\",\n  \"donoId\": 999999\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurantes",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "restaurantes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Buscar restaurante por id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurantes/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "9. Cadastro de Item de Cardápio",
+      "item": [
+        {
+          "name": "Cadastro válido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "var jsonData = pm.response.json();",
+                  "pm.test(\"Retorna id do item de cardápio\", function () {",
+                  "    pm.expect(jsonData.id).to.not.be.undefined;",
+                  "});",
+                  "",
+                  "if (jsonData.id) {",
+                  "    pm.collectionVariables.set(\"itemCardapioId\", jsonData.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Risoto de Funghi\",\n  \"descricao\": \"Arroz arbóreo, funghi secchi e parmesão\",\n  \"preco\": 59.90,\n  \"disponivelSomenteNoLocal\": false,\n  \"caminhoFoto\": \"/fotos/risoto-funghi.jpg\",\n  \"restauranteId\": {{restauranteId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/itens-cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "itens-cardapio"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro inválido - preço negativo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test(\"Retorna campos com erro de validação\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.campos).to.not.be.undefined;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Item Inválido\",\n  \"descricao\": \"Teste de preço negativo\",\n  \"preco\": -10,\n  \"disponivelSomenteNoLocal\": false,\n  \"restauranteId\": {{restauranteId}}\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/itens-cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "itens-cardapio"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cadastro inválido - restaurante inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 404 Not Found\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Item Órfão\",\n  \"descricao\": \"Teste de restaurante inexistente\",\n  \"preco\": 10,\n  \"disponivelSomenteNoLocal\": false,\n  \"restauranteId\": 999999\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/itens-cardapio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "itens-cardapio"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar itens por restaurante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Retorna lista de itens\", function () {",
+                  "    pm.expect(pm.response.json()).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/itens-cardapio/restaurante/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "itens-cardapio",
+                "restaurante",
+                "{{restauranteId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Excluir item de cardápio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/itens-cardapio/{{itemCardapioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "itens-cardapio",
+                "{{itemCardapioId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10. Exclusão de Restaurante",
+      "item": [
+        {
+          "name": "Excluir restaurante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/restaurantes/{{restauranteId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "restaurantes",
+                "{{restauranteId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "11. Exclusão de Usuário",
       "item": [
         {
           "name": "Excluir usuário",
@@ -678,6 +1348,22 @@
     },
     {
       "key": "usuarioId",
+      "value": ""
+    },
+    {
+      "key": "tipoUsuarioId",
+      "value": ""
+    },
+    {
+      "key": "tipoUsuarioAssociacaoId",
+      "value": ""
+    },
+    {
+      "key": "restauranteId",
+      "value": ""
+    },
+    {
+      "key": "itemCardapioId",
       "value": ""
     }
   ]
