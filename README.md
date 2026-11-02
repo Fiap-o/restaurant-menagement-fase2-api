@@ -140,10 +140,11 @@ Erros seguem o padrão RFC 7807 (`ProblemDetail`), retornando `type`, `title`, `
 
 ## Testes automatizados
 
-O projeto inclui testes unitários (JUnit 5 + Mockito) para a camada de serviço, cobrindo cenários de sucesso e de erro:
+O projeto tem três tipos de teste:
 
-- `UsuarioServiceImplTest` — cadastro, atualização, troca de senha, exclusão e busca de usuários
-- `AuthServiceImplTest` — autenticação com credenciais válidas e inválidas
+- **Testes unitários** (JUnit 5 + Mockito) para os casos de uso (`application/usecase`), os mappers e a camada de segurança (JWT, filtro e `UserDetailsService`). Exemplos: `CriarRestauranteUseCaseTest`, `LoginUseCaseTest`, `CriarUsuarioUseCaseTest`.
+- **Testes de repositório** com `@DataJpaTest` e H2 em memória, validando as implementações JPA. Exemplos: `RestauranteRepositoryImplTest`, `UsuarioRepositoryImplTest`.
+- **Testes de controller** com `@WebMvcTest` e MockMvc, validando rotas, validação de entrada e respostas HTTP. Exemplos: `RestauranteControllerTest`, `TipoUsuarioControllerTest`.
 
 Para rodar:
 
@@ -151,7 +152,9 @@ Para rodar:
 ./mvnw test
 ```
 
-Ou, pela IDE, clique no ícone ▶️ ao lado da classe de teste (`src/test/java/.../service/impl/`).
+Para gerar o relatório de cobertura (JaCoCo), rode `./mvnw verify` e abra `target/site/jacoco/index.html`.
+
+Ou, pela IDE, clique no ícone ▶️ ao lado da classe de teste (`src/test/java/...`).
 
 ## Arquitetura
 
