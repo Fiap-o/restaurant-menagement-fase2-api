@@ -179,7 +179,7 @@ banco de dados) sem alterar a lógica de negócio.
 | **OCP** (Aberto/Fechado) | Repositórios e serviços externos são acessados via interfaces (`domain/repository`, `application/port`), permitindo trocar a implementação sem alterar os casos de uso |
 | **LSP** (Substituição de Liskov) | As implementações de repositório (`infrastructure/persistence/repository`) cumprem integralmente o contrato definido pela interface de domínio correspondente |
 | **ISP** (Segregação de Interfaces) | Interfaces enxutas, com apenas os métodos realmente usados pelos casos de uso (ex: `TokenService` expõe só geração de token, não validação) |
-| **DIP** (Inversão de Dependência) | Casos de uso dependem de abstrações de domínio (`UsuarioRepository`, `TokenService`, `AuthenticationPort`), nunca de `JpaRepository` ou de bibliotecas de terceiros diretamente |
+| **DIP** (Inversão de Dependência) | Casos de uso dependem de abstrações de domínio e de portas (`UsuarioRepository`, `TokenService`, `AuthenticationPort`), nunca de `JpaRepository`. Exceção conhecida: `CriarUsuarioUseCase` e `AtualizarSenhaUseCase` usam diretamente o `PasswordEncoder` do Spring Security, que pode virar uma porta própria em evolução futura |
 
 ## Estrutura do projeto
 
